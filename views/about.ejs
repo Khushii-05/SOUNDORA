@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDORA - About Us</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">SOUNDORA</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">HOME</a></li>
+                    <li><a href="/library">LIBRARY</a></li>
+                    <li><a href="/music">MUSIC</a></li>
+                    <li class="active"><a href="/about">ABOUT US</a></li>
+                    <% if (locals.user) { %>
+                        <li><a href="/profile">PROFILE</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>YOUR PLAYLISTS</h3>
+                <ul>
+                    <% if (locals.user) { %>
+                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        <% if (locals.playlists && locals.playlists.length > 0) { %>
+                            <% playlists.forEach(pl => { %>
+                                <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
+                            <% }) %>
+                        <% } else { %>
+                            <li><a href="/library">No playlists yet</a></li>
+                        <% } %>
+                    <% } else { %>
+                        <li><a href="/auth">YOUR FAVOURITES</a></li>
+                        <li><a href="/auth">PLAYLIST 1</a></li>
+                        <li><a href="/auth">PLAYLIST 2</a></li>
+                        <li><a href="/auth">PLAYLIST 3</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content about">
+            <div class="header">
+                <h1>ABOUT US</h1>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-description">
+                    <p>Welcome to SOUNDORA — your ultimate destination to discover, stream, and vibe with music that knows you.</p>
+                    <p>We're not just another music platform.</p>
+                    <p>We're a team of passionate creators, dreamers, and developers on a mission to blend technology with emotion — using the power of AI to make your music experience smarter, smoother, and way more personal.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/script.js"></script>
+    <script src="/js/musicPlayer.js"></script>
+
+</body>
+</html>

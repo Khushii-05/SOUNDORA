@@ -1,0 +1,18 @@
+<link rel="stylesheet" href="/css/upload.css" />
+
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <label>Title: <input type="text" name="title" required /></label><br>
+    <label>Artist: <input type="text" name="artist" required /></label><br>
+    <label>Genre: 
+      <select name="genre">
+        <option value="Pop">Pop</option>
+        <option value="Lo-fi">Lo-fi</option>
+        <option value="Bollywood">Bollywood</option>
+        <option value="Country">Jazz</option>
+        <option value="Disco">R&B</option>
+      </select>
+    </label><br>
+    <label>Upload Song: <input type="file" name="audio" accept="audio/*" required /></label><br>
+    <button type="submit">Upload</button>
+  </form>
+  

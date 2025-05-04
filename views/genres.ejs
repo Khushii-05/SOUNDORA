@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDORA - Genres</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .genre-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .genre-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .genre-title {
+            font-size: 1.8rem;
+            margin: 0;
+            color: #fff;
+        }
+        
+        .song-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s;
+        }
+        
+        .song-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .song-number {
+            width: 30px;
+            text-align: center;
+            margin-right: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .song-icon {
+            margin-right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .song-details {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .song-info {
+            flex-grow: 1;
+        }
+        
+        .song-title {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .song-artist {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .song-controls {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+        
+        .song-controls button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .song-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .song-duration {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.6);
+            padding-right: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .playlist-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .playlist-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #121212;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+            z-index: 1;
+            border-radius: 4px;
+            padding: 8px 0;
+            right: 0;
+        }
+        
+        .playlist-dropdown:hover .playlist-dropdown-content {
+            display: block;
+        }
+        
+        .playlist-dropdown-content a {
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        
+        .playlist-dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .create-playlists-btn {
+            background-color: #1db954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            margin-bottom: 20px;
+        }
+        
+        .create-playlists-btn:hover {
+            background-color: #1ed760;
+        }
+        
+        .genre-section.collapsed .song-list {
+            display: none;
+        }
+        
+        .genre-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">SOUNDORA</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">HOME</a></li>
+                    <li><a href="/library">LIBRARY</a></li>
+                    <li><a href="/music">MUSIC</a></li>
+                    <li class="active"><a href="/genres">GENRES</a></li>
+                    <li><a href="/about">ABOUT US</a></li>
+                    <% if (locals.user) { %>
+                        <li><a href="/profile">PROFILE</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>YOUR PLAYLISTS</h3>
+                <ul>
+                    <% if (locals.user) { %>
+                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        <% if (playlists && playlists.length > 0) { %>
+                            <% playlists.forEach(pl => { %>
+                                <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
+                            <% }) %>
+                        <% } else { %>
+                            <li><a href="/library">No playlists yet</a></li>
+                        <% } %>
+                    <% } else { %>
+                        <li><a href="/auth">LOGIN TO SEE PLAYLISTS</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>GENRES</h1>
+                <div class="buttons">
+                    <% if (locals.user) { %>
+                        <button id="createGenrePlaylists" class="create-playlists-btn">CREATE GENRE PLAYLISTS</button>
+                    <% } else { %>
+                        <button class="explore-btn" onclick="window.location.href='/auth'">
+                            LOG IN
+                        </button>
+                    <% } %>
+                </div>
+            </div>
+            
+            <div id="genres-container">
+                <% if (genreGroups && Object.keys(genreGroups).length > 0) { %>
+                    <% Object.keys(genreGroups).forEach(genre => { %>
+                        <div class="genre-section" id="genre-<%= genre.toLowerCase().replace(/\s/g, '-') %>">
+                            <div class="genre-header">
+                                <h2 class="genre-title"><%= genre %></h2>
+                                <button class="genre-toggle">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
+                            </div>
+                            <ul class="song-list">
+                                <% genreGroups[genre].forEach((song, index) => { %>
+                                    <li class="song-item">
+                                        <div class="song-number"><%= index + 1 %></div>
+                                        <div class="song-icon"><i class="fas fa-music"></i></div>
+                                        <div class="song-details">
+                                            <div class="song-info">
+                                                <div class="song-title"><%= song.title %></div>
+                                                <div class="song-artist"><%= song.artist %></div>
+                                            </div>
+                                            <div class="song-duration">
+                                                <%= song.duration || '3:30' %> <!-- Example duration -->
+                                            </div>
+                                        </div>
+                                        <div class="song-controls">
+                                            <audio controls>
+                                                <source src="<%= song.audioUrl %>" type="audio/mpeg">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                            <% if (locals.user) { %>
+                                                <div class="playlist-dropdown">
+                                                    <button title="Add to playlist">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    <div class="playlist-dropdown-content">
+                                                        <% if (playlists && playlists.length > 0) { %>
+                                                            <% playlists.forEach(pl => { %>
+                                                                <a href="#" onclick="addToPlaylist('<%= pl._id %>', '<%= song._id %>')"><%= pl.name %></a>
+                                                            <% }) %>
+                                                        <% } else { %>
+                                                            <a href="/library">Create a playlist first</a>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-music" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <h3>No songs uploaded yet</h3>
+                        <p>Start by uploading some songs to see them organized by genre</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle genre sections
+            const genreToggles = document.querySelectorAll('.genre-toggle');
+            genreToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const genreSection = this.closest('.genre-section');
+                    genreSection.classList.toggle('collapsed');
+                    
+                    // Update icon
+                    const icon = this.querySelector('i');
+                    if (genreSection.classList.contains('collapsed')) {
+                        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    } else {
+                        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    }
+                });
+            });
+            
+            // Create genre playlists button
+            const createButton = document.getElementById('createGenrePlaylists');
+            if (createButton) {
+                createButton.addEventListener('click', function() {
+                    fetch('/api/genres/create-genre-playlists', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(`Created ${data.playlists.length} genre playlists!`);
+                            window.location.reload();
+                        } else {
+                            alert('Error creating playlists: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while creating genre playlists');
+                    });
+                });
+            }
+        });
+        
+        function addToPlaylist(playlistId, songId) {
+            fetch(`/api/playlists/${playlistId}/songs`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ songId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Song added to playlist!');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred');
+            });
+            
+            // Prevent default link behavior
+            return false;
+        }
+    </script>
+    
+    <script src="/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDORA - Library</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Add custom styles for search results */
+        .search-results {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #121212;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 100;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        
+        .search-results.active {
+            display: block;
+        }
+        
+        .song-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 5px;
+        }
+        
+        .song-result:last-child {
+            border-bottom: none;
+        }
+        
+        .song-result-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .song-result-artist {
+            font-size: 0.9em;
+            color: #b3b3b3;
+        }
+        
+        .song-result-controls button {
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .song-result-controls button:hover {
+            background-color: #9900ff;
+        }
+
+        .error-message {
+            color: #ff6666;
+            background-color: rgba(255, 102, 102, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .auth-message {
+            color: #ffffff;
+            background-color: rgba(153, 0, 255, 0.2);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .auth-message a {
+            color: #9900ff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">SOUNDORA</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">HOME</a></li>
+                    <li class="active"><a href="/library">LIBRARY</a></li>
+                    <li><a href="/music">MUSIC</a></li>
+                    <li><a href="/about">ABOUT US</a></li>
+                    <% if (locals.user) { %>
+                        <li><a href="/profile">PROFILE</a></li>
+                    <% } else { %>
+                        <li><a href="/auth">SIGN IN</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>YOUR PLAYLISTS</h3>
+                <ul>
+                    <% if (locals.user) { %>
+                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        <% if (playlists && playlists.length > 0) { %>
+                            <% playlists.forEach(pl => { %>
+                                <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
+                            <% }) %>
+                        <% } else { %>
+                            <li><span>No playlists yet</span></li>
+                        <% } %>
+                    <% } else { %>
+                        <li><a href="/auth">LOGIN TO VIEW</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content library">
+            <div class="header">
+                <h1>LIBRARY</h1>
+                <div class="buttons">
+                    <% if (locals.user) { %>
+                        <!-- Show profile button only when logged in -->
+                        <button class="explore-btn" onclick="window.location.href='/profile'">
+                          PROFILE
+                        </button>
+                    <% } else { %>
+                        <button class="explore-btn" onclick="window.location.href='/auth'">
+                          SIGN IN
+                        </button>
+                    <% } %>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search songs...">
+                <button id="search-button">Search</button>
+            </div>
+              
+            <div id="search-results" class="search-results"></div>
+            
+            <div class="library-content">
+                <div class="category">
+                    <h2>YOUR PLAYLISTS</h2>
+                    <% if (locals.user) { %>
+                        <!-- Show playlist creation form only when logged in -->
+                        <form id="create-playlist-form" style="margin: 10px 0;">
+                            <input type="text" name="name" placeholder="New Playlist Name" required>
+                            <button type="submit" class="explore-btn">Create Playlist</button>
+                        </form>
+
+                        <div class="playlist-grid">
+                            <% if (playlists && playlists.length > 0) { %>
+                                <% playlists.forEach(pl => { %>
+                                    <div class="playlist-item">
+                                        <a href="/playlists/<%= pl._id %>">
+                                            <div class="playlist-cover"></div>
+                                            <p><%= pl.name %></p>
+                                        </a>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p style="color: white;">No playlists yet. Create your first one!</p>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <!-- Show authentication message when not logged in -->
+                        <div class="auth-message">
+                            <p>Please <a href="/auth">sign in</a> to create and view your playlists.</p>
+                        </div>
+                    <% } %>
+                </div>
+                
+                
+                <div class="category">
+                    <h2>RECENTLY UPLOADED</h2>
+                    <div class="music-grid">
+                        <% if (songs && songs.length > 0) { %>
+                          <% songs.forEach(song => { %>
+                            <div class="music-item">
+                              <div class="music-content">
+                                <div class="music-icon"><i class="fas fa-music"></i></div>
+                                <p><strong><%= song.title %></strong> by <%= song.artist %></p>
+                                <audio controls>
+                                  <source src="<%= song.audioUrl %>" type="audio/mpeg">
+                                  Your browser does not support the audio element.
+                                </audio>
+                                <% if (locals.user) { %>
+                                  <button class="add-btn" onclick="showAddToPlaylistModal('<%= song._id %>')">
+                                    <i class="fas fa-plus"></i> Add to Playlist
+                                  </button>
+                                <% } %>
+                              </div>
+                            </div>
+                          <% }) %>
+                        <% } else { %>
+                          <p style="color: white;">No songs uploaded yet.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="playlist-container" class="playlist-grid"></div>
+
+    <div id="song-list"></div>
+    
+    <div id="player">
+      <div id="now-playing">Nothing playing</div>
+      <audio id="audio-player" controls></audio>
+    </div>
+
+    <script src="/js/musicPlayer.js"></script>
+    <script src="/js/musicLibrary.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOUNDORA - Log In or Sign Up</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<body class="auth-body">
+  <div class="auth-container">
+    <div class="auth-sidebar">
+      <div class="logo">SOUNDORA</div>
+      <div class="auth-sidebar-content">
+        <h2>Music that knows you</h2>
+        <p>Join Soundora to discover personalized playlists, follow your favorite artists, and enjoy unlimited streaming.</p>
+        <div class="music-waves">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-container">
+      <nav class="auth-nav">
+        <a href="/"><i class="fas fa-home"></i> Back to Home</a>
+      </nav>
+      
+      <!-- Display error message if there is one -->
+      <% if (locals.error) { %>
+        <div class="error-message">
+          <% if (error === 'user_not_found') { %>
+            User not found. Please check your username.
+          <% } else if (error === 'invalid_password') { %>
+            Invalid password. Please try again.
+          <% } else if (error === 'signup') { %>
+            An error occurred during signup. Please try again.
+          <% } else if (error === 'login') { %>
+            An error occurred during login. Please try again.
+          <% } else if (error === 'google_login') { %>
+            An error occurred with Google login. Please try again.
+          <% } else if (error === 'google_callback') { %>
+            An error occurred processing your Google login. Please try again.
+          <% } else { %>
+            <%= error %>
+          <% } %>
+        </div>
+      <% } %>
+      
+      <!-- Registration success message -->
+      <% if (locals.registered) { %>
+        <div class="success-message">
+          Account created successfully! Please log in.
+        </div>
+      <% } %>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-target="login-form">Log In</button>
+        <button class="auth-tab" data-target="signup-form">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="auth-form active">
+        <div class="social-login">
+          <a href="/auth/google" class="social-btn google">
+            <i class="fab fa-google"></i> Continue with Google
+          </a>
+        </div>
+        
+        <div class="divider"><span>OR</span></div>
+        
+        <form id="login-form-el" action="/auth/login" method="POST">
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <div class="input-icon">
+              <i class="fas fa-user"></i>
+              <input type="text" id="login-username" name="username" placeholder="Enter your username" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <div class="input-icon">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="login-password" name="password" placeholder="Enter your password" required />
+              <i class="fas fa-eye-slash toggle-password"></i>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <div class="remember-me">
+              <input type="checkbox" id="remember" name="remember" />
+              <label for="remember">Remember me</label>
+            </div>
+            <a href="#" class="forgot-password">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-solid btn-block">Log In</button>
+        </form>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="signup-form" class="auth-form">
+        <div class="social-login">
+          <a href="/auth/google" class="social-btn google">
+            <i class="fab fa-google"></i> Continue with Google
+          </a>
+          <button class="social-btn facebook"><i class="fab fa-facebook-f"></i> Continue with Facebook</button>
+          <button class="social-btn apple"><i class="fab fa-apple"></i> Continue with Apple</button>
+        </div>
+      
+        <div class="divider"><span>OR</span></div>
+      
+        <form id="signup-form-el" action="/auth/signup" method="POST">
+          <div class="form-row">
+            <div class="form-group half">
+              <label for="signup-first-name">First Name</label>
+              <div class="input-icon">
+                <i class="fas fa-user"></i>
+                <input type="text" id="signup-first-name" name="firstName" placeholder="First name" required />
+              </div>
+            </div>
+      
+            <div class="form-group half">
+              <label for="signup-last-name">Last Name</label>
+              <div class="input-icon">
+                <i class="fas fa-user"></i>
+                <input type="text" id="signup-last-name" name="lastName" placeholder="Last name" required />
+              </div>
+            </div>
+          </div>
+      
+          <div class="form-group">
+            <label for="signup-username">Username</label>
+            <div class="input-icon">
+              <i class="fas fa-user-tag"></i>
+              <input type="text" id="signup-username" name="username" placeholder="Create a username" required />
+            </div>
+          </div>
+      
+          <div class="form-group">
+            <label for="signup-email">Email address</label>
+            <div class="input-icon">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="signup-email" name="email" placeholder="Enter your email" required />
+            </div>
+          </div>
+      
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <div class="input-icon">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="signup-password" name="password" placeholder="Create a password" required />
+              <i class="fas fa-eye-slash toggle-password"></i>
+            </div>
+          </div>
+      
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <div class="input-icon">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="confirm-password" name="confirmPassword" placeholder="Confirm your password" required />
+            </div>
+          </div>
+      
+          <div class="form-group checkbox">
+            <input type="checkbox" id="terms" required />
+            <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+          </div>
+      
+          <button type="submit" class="btn btn-solid btn-block">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.auth-tab');
+      const forms = document.querySelectorAll('.auth-form');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs and forms
+          tabs.forEach(t => t.classList.remove('active'));
+          forms.forEach(f => f.classList.remove('active'));
+          
+          // Add active class to clicked tab
+          tab.classList.add('active');
+          
+          // Show the corresponding form
+          const targetForm = document.getElementById(tab.dataset.target);
+          if (targetForm) {
+            targetForm.classList.add('active');
+          }
+        });
+      });
+
+      // Password visibility toggle
+      const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+      togglePasswordButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const passwordInput = this.previousElementSibling;
+          if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.classList.replace('fa-eye-slash', 'fa-eye');
+          } else {
+            passwordInput.type = 'password';
+            this.classList.replace('fa-eye', 'fa-eye-slash');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

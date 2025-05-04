@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDORA - <%= playlist.name %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .playlist-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .playlist-cover {
+            width: 160px;
+            height: 160px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-right: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .playlist-cover i {
+            font-size: 64px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .playlist-info h1 {
+            margin: 0;
+            margin-bottom: 5px;
+        }
+        
+        .playlist-info p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+        }
+        
+        .song-count {
+            margin-top: 5px;
+        }
+        
+        .playlist-songs {
+            margin-top: 30px;
+        }
+        
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s;
+        }
+        
+        .song-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .song-number {
+            width: 30px;
+            text-align: center;
+            margin-right: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .song-icon {
+            margin-right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .song-details {
+            flex-grow: 1;
+        }
+        
+        .song-title {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .song-artist {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .song-controls {
+            margin-left: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .song-controls button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .song-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .empty-playlist {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">SOUNDORA</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">HOME</a></li>
+                    <li><a href="/library">LIBRARY</a></li>
+                    <li><a href="/music">MUSIC</a></li>
+                    <li><a href="/about">ABOUT US</a></li>
+                    <% if (locals.user) { %>
+                        <li><a href="/profile">PROFILE</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>YOUR PLAYLISTS</h3>
+                <ul>
+                    <% if (locals.user) { %>
+                        <li><a href="/playlists/favorites">YOUR FAVOURITES</a></li>
+                        <!-- These could be dynamically generated from user data -->
+                        <li><a href="/library">MORE PLAYLISTS...</a></li>
+                    <% } else { %>
+                        <li><a href="/auth">YOUR FAVOURITES</a></li>
+                        <li><a href="/auth">PLAYLIST 1</a></li>
+                        <li><a href="/auth">PLAYLIST 2</a></li>
+                        <li><a href="/auth">PLAYLIST 3</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content library">
+            <div class="header">
+                <div class="playlist-header">
+                    <div class="playlist-cover">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="playlist-info">
+                        <h1><%= playlist.name %></h1>
+                        <p>Your Playlist</p>
+                        <p class="song-count"><%= playlist.songs.length %> songs</p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="explore-btn" onclick="window.location.href='/library'">
+                        BACK TO LIBRARY
+                    </button>
+                </div>
+            </div>
+            
+            <div class="playlist-songs">
+                <% if (playlist.songs && playlist.songs.length > 0) { %>
+                    <% playlist.songs.forEach((song, index) => { %>
+                        <div class="song-item">
+                            <div class="song-number"><%= index + 1 %></div>
+                            <div class="song-icon"><i class="fas fa-music"></i></div>
+                            <div class="song-details">
+                                <div class="song-title"><%= song.title %></div>
+                                <div class="song-artist"><%= song.artist %></div>
+                            </div>
+                            <div class="song-controls">
+                                <audio controls>
+                                    <source src="<%= song.audioUrl %>" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                                <button onclick="removeSongFromPlaylist('<%= playlist._id %>', '<%= song._id %>')" title="Remove from playlist">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="empty-playlist">
+                        <i class="fas fa-music" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <h3>This playlist is empty</h3>
+                        <p>Go to your library to add songs to this playlist</p>
+                        <button class="explore-btn" onclick="window.location.href='/library'" style="margin-top: 20px;">
+                            EXPLORE LIBRARY
+                        </button>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function removeSongFromPlaylist(playlistId, songId) {
+            if (confirm('Are you sure you want to remove this song from the playlist?')) {
+                fetch(`/api/playlists/${playlistId}/songs/${songId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Reload the page to show the updated playlist
+                        window.location.reload();
+                    } else {
+                        alert('Failed to remove song from playlist');
+                    }
+                }) 
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred');
+                });
+            }
+        }
+    </script>
+    <script src="/js/musicPlayer.js"></script>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

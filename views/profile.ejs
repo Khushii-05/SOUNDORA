@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDORA - Your Profile</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">SOUNDORA</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">HOME</a></li>
+                    <li><a href="/library">LIBRARY</a></li>
+                    <li><a href="/music">MUSIC</a></li>
+                    <li><a href="/about">ABOUT US</a></li>
+                    <% if (locals.user) { %>
+                        <li class="active"><a href="/profile">PROFILE</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>YOUR PLAYLISTS</h3>
+                <ul>
+                    <% if (locals.user) { %>
+                        <li><a href="/playlists/favorites">YOUR FAVOURITES</a></li>
+                        <li><a href="/playlists/1">PLAYLIST 1</a></li>
+                        <li><a href="/playlists/2">PLAYLIST 2</a></li>
+                        <li><a href="/playlists/3">PLAYLIST 3</a></li>
+                    <% } else { %>
+                        <li><a href="/auth">YOUR FAVOURITES</a></li>
+                        <li><a href="/auth">PLAYLIST 1</a></li>
+                        <li><a href="/auth">PLAYLIST 2</a></li>
+                        <li><a href="/auth">PLAYLIST 3</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content profile">
+            <div class="profile-header">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <button class="change-avatar-btn">
+                        <i class="fas fa-camera"></i> Change Avatar
+                    </button>
+                </div>
+                <div class="profile-info">
+                    <h1><%= userData.fullName %></h1>
+                    <div class="username">@<%= userData.username %></div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">0</span>
+                            <span class="stat-label">Following</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value"><%= userData.playlists || 0 %></span>
+                            <span class="stat-label">Playlists</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-tabs">
+                <button class="profile-tab active" data-target="profile-details">Profile Details</button>
+                <button class="profile-tab" data-target="activity">Recent Activity</button>
+                <button class="profile-tab" data-target="my-playlists">My Playlists</button>
+                <button class="profile-tab" data-target="favorites">Favorites</button>
+            </div>
+
+            <div class="profile-content">
+                <!-- Profile Details Tab -->
+                <div id="profile-details" class="profile-tab-content active">
+                    <div class="profile-card">
+                        <h2>Account Information</h2>
+                        <form id="profile-form" class="profile-form">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="fullName" name="fullName" value="<%= userData.fullName %>" placeholder="Full Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-at"></i>
+                                    <input type="text" id="username" name="username" value="<%= userData.username %>" placeholder="Username" readonly>
+                                    <small>Username cannot be changed</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="email" name="email" value="<%= userData.email %>" placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <button type="submit" class="btn btn-solid btn-block">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="profile-card">
+                        <h2>Change Password</h2>
+                        <form id="password-form" class="profile-form">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="currentPassword" name="currentPassword" placeholder="Current Password">
+                                    <i class="fas fa-eye-slash toggle-password"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="newPassword" name="newPassword" placeholder="New Password">
+                                    <i class="fas fa-eye-slash toggle-password"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmNewPassword">Confirm New Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm New Password">
+                                    <i class="fas fa-eye-slash toggle-password"></i>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <button type="submit" class="btn btn-outline btn-block">Change Password</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="profile-card danger-zone">
+                        <h2>Danger Zone</h2>
+                        <p>Once you delete your account, there is no going back. Please be certain.</p>
+                        <button class="btn btn-danger btn-block" id="delete-account-btn">Delete Account</button>
+                    </div>
+                </div>
+
+                <!-- Activity Tab -->
+                <div id="activity" class="profile-tab-content">
+                    <div class="activity-feed">
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <h3>No Recent Activity</h3>
+                            <p>Your music listening history will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Playlists Tab -->
+                <div id="my-playlists" class="profile-tab-content">
+                    <div class="playlist-controls">
+                        <button class="btn btn-solid create-playlist-btn">
+                            <i class="fas fa-plus"></i> Create New Playlist
+                        </button>
+                    </div>
+                    <div class="playlists-grid">
+                        <div class="empty-state">
+                            <i class="fas fa-music"></i>
+                            <h3>No Playlists Yet</h3>
+                            <p>Create your first playlist to start organizing your music.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorites Tab -->
+                <div id="favorites" class="profile-tab-content">
+                    <div class="favorites-list">
+                        <div class="empty-state">
+                            <i class="fas fa-heart"></i>
+                            <h3>No Favorites Yet</h3>
+                            <p>Songs you like will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGOUT BUTTON (ONLY ADDITION) -->
+            <div class="profile-footer">
+                <form action="/auth/logout" method="POST">
+
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> LOGOUT
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal" id="delete-account-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Account</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <div class="input-icon">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirm-password-delete" placeholder="Enter your password to confirm">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancel-delete-btn">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">Delete My Account</button>
+            </div>
+        </div>
+    </div>
+   
+    <script src="/js/script.js"></script>
+</body>
+</html>

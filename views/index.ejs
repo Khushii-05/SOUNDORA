@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOUNDORA - Your Music Platform</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="logo">SOUNDORA</div>
+        <nav class="main-nav">
+          <ul>
+            <li class="active"><a href="/home">HOME</a></li>
+            <li><a href="/library">LIBRARY</a></li>
+            <li><a href="/music">MUSIC</a></li>
+            <li><a href="/about">ABOUT US</a></li>
+            <!-- Add profile link (only visible when logged in) -->
+            <% if (locals.user) { %>
+            <li><a href="/profile">PROFILE</a></li>
+            <% } %>
+          </ul>
+        </nav>
+        <div class="playlists">
+          <h3>YOUR PLAYLISTS</h3>
+          <ul>
+            <% if (locals.user) { %>
+                <!-- If user is logged in, fetch their playlists dynamically -->
+                <% if (playlists && playlists.length > 0) { %>
+                    <% playlists.forEach(pl => { %>
+                        <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
+                    <% }) %>
+                <% } else { %>
+                    <li><a href="/library">No playlists yet</a></li>
+                <% } %>
+            <% } else { %>
+                <li><a href="/auth">YOUR FAVOURITES</a></li>
+                <li><a href="/auth">PLAYLIST 1</a></li>
+                <li><a href="/auth">PLAYLIST 2</a></li>
+                <li><a href="/auth">PLAYLIST 3</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content home">
+        <div class="header">
+          <div class="hero">
+            <h1>Let's vibe, create, and repeat!</h1>
+            <div class="buttons">
+              <% if (locals.user) { %>
+              <!-- Add profile button next to logout -->
+              <button
+                class="explore-btn"
+                onclick="window.location.href='/profile'"
+              >
+                PROFILE
+              </button>
+             
+              </button>
+              <% } else { %>
+              <button
+                class="explore-btn"
+                onclick="window.location.href='/auth'"
+              >
+                LOG IN
+              </button>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search songs..." />
+          <button id="search-button">Search</button>
+        </div>
+
+        <div id="search-results" class="search-results"></div>
+
+        <div class="categories">
+          <div class="category">
+            <h2>TRENDING</h2>
+            <div class="music-grid">
+              <!-- Placeholder for trending music items -->
+              <div class="music-item"></div>
+              <div class="music-item"></div>
+              <div class="music-item"></div>
+              <div class="music-item"></div>
+            </div>
+          </div>
+
+          <div class="category">
+            <h2>GENRE</h2>
+            <div class="music-grid">
+              <!-- Placeholder for genre music items -->
+              <div class="music-item"></div>
+              <div class="music-item"></div>
+              <div class="music-item"></div>
+              <div class="music-item"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="playlist-container" class="playlist-grid"></div>
+
+<div id="song-list"></div>
+
+<div id="player">
+  <div id="now-playing">Nothing playing</div>
+  <audio id="audio-player" controls></audio>
+</div>
+    <script src="/js/musicPlayer.js"></script>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>

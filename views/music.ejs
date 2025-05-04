@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUNDORA - Music</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .music-content {
+            margin-top: 30px;
+        }
+        
+        .music-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .music-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .music-item i {
+            font-size: 48px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        #player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        #now-playing {
+            margin-right: 20px;
+            flex-grow: 1;
+        }
+        
+        #audio-player {
+            width: 300px;
+        }
+        
+        .search-results {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .search-results.active {
+            display: block;
+        }
+        
+        .song-result {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s;
+        }
+        
+        .song-result:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .song-result-info {
+            flex-grow: 1;
+        }
+        
+        .song-result-title {
+            font-weight: bold;
+        }
+        
+        .song-result-artist {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .song-result-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .song-result-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s;
+        }
+        
+        .song-result-controls button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">SOUNDORA</div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">HOME</a></li>
+                    <li><a href="/library">LIBRARY</a></li>
+                    <li class="active"><a href="/music">MUSIC</a></li>
+                    <li><a href="/about">ABOUT US</a></li>
+                    <% if (locals.user) { %>
+                    <li><a href="/profile">PROFILE</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>YOUR PLAYLISTS</h3>
+                <ul>
+                    <% if (locals.user) { %>
+                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        <% if (locals.playlists && locals.playlists.length > 0) { %>
+                            <% playlists.forEach(function(pl) { %>
+                                <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
+                            <% }); %>
+                        <% } else { %>
+                            <li><a href="/library">No playlists yet</a></li>
+                        <% } %>
+                    <% } else { %>
+                        <li><a href="/auth">YOUR FAVOURITES</a></li>
+                        <li><a href="/auth">PLAYLIST 1</a></li>
+                        <li><a href="/auth">PLAYLIST 2</a></li>
+                        <li><a href="/auth">PLAYLIST 3</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content music">
+            <div class="header">
+                <h1>MUSIC</h1>
+                <div class="buttons">
+                    <% if (locals.user) { %>
+                    <button class="explore-btn" onclick="window.location.href='/library'">
+                        MY LIBRARY
+                    </button>
+                    <% } else { %>
+                    <button class="explore-btn" onclick="window.location.href='/auth'">
+                        LOG IN
+                    </button>
+                    <% } %>
+                </div>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search songs...">
+                <button id="search-button">Search</button>
+            </div>
+            
+            <div id="search-results" class="search-results"></div>
+            
+            <div class="music-content">
+                <div class="category">
+                    <h2>TRENDING</h2>
+                    <div class="music-grid">
+                        <!-- Trending music items -->
+                        <div class="music-item" onclick="loadGenreSongs('pop')">
+                            <i class="fas fa-fire"></i>
+                            <div>Pop Hits</div>
+                        </div>
+                        <div class="music-item" onclick="loadGenreSongs('rock')">
+                            <i class="fas fa-guitar"></i>
+                            <div>Rock Classics</div>
+                        </div>
+                        <div class="music-item" onclick="loadGenreSongs('hiphop')">
+                            <i class="fas fa-music"></i>
+                            <div>Hip Hop</div>
+                        </div>
+                        <div class="music-item" onclick="loadGenreSongs('electronic')">
+                            <i class="fas fa-sliders-h"></i>
+                            <div>Electronic</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <h2>GENRES</h2>
+                    <div class="music-grid">
+                        <!-- Genre music items -->
+                        <div class="music-item" onclick="loadGenreSongs('jazz')">
+                            <i class="fas fa-saxophone"></i>
+                            <div>Jazz</div>
+                        </div>
+                        <div class="music-item" onclick="loadGenreSongs('classical')">
+                            <i class="fas fa-violin"></i>
+                            <div>Classical</div>
+                        </div>
+                        <div class="music-item" onclick="loadGenreSongs('rnb')">
+                            <i class="fas fa-compact-disc"></i>
+                            <div>R&B</div>
+                        </div>
+                        <div class="music-item" onclick="loadGenreSongs('indie')">
+                            <i class="fas fa-headphones"></i>
+                            <div>Indie</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="genre-songs" class="category" style="display: none;">
+                    <h2 id="genre-title">GENRE SONGS</h2>
+                    <div id="genre-songs-list" class="song-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="player">
+        <div id="now-playing">Nothing playing</div>
+        <audio id="audio-player" controls></audio>
+    </div>
+    
+    <script src="/js/musicPlayer.js"></script>
+    <script src="/js/music.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>
