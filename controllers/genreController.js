@@ -53,42 +53,28 @@ exports.getGenresPage = async (req, res) => {
   }
 };
 
-// Get a specific genre page
+// In genreController.js, update getGenreDetailPage
 exports.getGenreDetailPage = async (req, res) => {
   try {
-    const genreName = req.params.genreName.replace(/-/g, ' ');
-    const isAuthenticated = req.cookies.token ? true : false;
-    let playlists = [];
-    let user = null;
-    
-    if (isAuthenticated) {
-      user = await getUserFromToken(req.cookies.token);
-      if (user) {
-        playlists = await Playlist.find({ user: user._id });
-      }
-    }
-    
-    // Get songs for this genre
-    const songs = await Song.find({ genre: { $regex: new RegExp(genreName, 'i') } }).sort({ title: 1 });
-    
-    // Find any playlists related to this genre
-    const relatedPlaylists = playlists.filter(playlist => 
-      playlist.name.toLowerCase().includes(genreName.toLowerCase())
-    );
-    
+    const genreName = req.params.genreName.replace(/-/g, ' '); // Convert hyphens to spaces
+    const songs = await Song.find({ 
+      genre: { $regex: new RegExp(`^${genreName}$`, 'i') } 
+    });
+
     res.render('genre-detail', {
-      user: isAuthenticated ? user : null,
       genre: genreName,
       songs: songs,
-      playlists: playlists,
-      relatedPlaylists: relatedPlaylists
+      user: req.user // Make sure you pass user data if needed
     });
   } catch (error) {
-    console.error('Error rendering genre detail page:', error);
+    console.error('Error:', error);
     res.status(500).render('error', { message: 'Error loading genre' });
   }
 };
 
+const sanitizeGenre = (genre) => {
+  return genre.replace(/[^\w\s]/gi, '').replace(/\s+/g, '-').toLowerCase();
+};
 // Helper function to get user from token
 const getUserFromToken = async (token) => {
   if (!token) return null;

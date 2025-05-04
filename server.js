@@ -145,21 +145,42 @@ app.get('/about', async (req, res) => {
 
 app.get('/home', async (req, res) => {
     try {
-        const isAuthenticated = !!req.cookies.token;
-        let playlists = [], songs = [];
-        if (isAuthenticated) {
-            const user = await getUserFromToken(req.cookies.token);
-            if (user) {
-                playlists = await Playlist.find({ user: user._id });
-                songs = await Song.find().sort({ createdAt: -1 }).limit(10);
-            }
+      const isAuthenticated = !!req.cookies.token;
+      let playlists = [], songs = [], genres = [];
+      
+      if (isAuthenticated) {
+        const user = await getUserFromToken(req.cookies.token);
+        if (user) {
+          playlists = await Playlist.find({ user: user._id });
+          songs = await Song.find().sort({ createdAt: -1 }).limit(10);
+          // Get unique genres
+          genres = await Song.distinct('genre'); 
         }
-        res.render('index', { user: isAuthenticated, playlists, songs });
+      }
+      
+      res.render('index', { 
+        user: isAuthenticated, 
+        playlists, 
+        songs,
+        genres // Add genres to the template data
+      });
+      
     } catch (err) {
-        console.error('Error fetching playlists:', err);
-        res.render('index', { user: !!req.cookies.token, playlists: [], songs: [] });
+      console.error('Error fetching data:', err);
+      res.render('index', { 
+        user: !!req.cookies.token, 
+        playlists: [], 
+        songs: [],
+        genres: []
+      });
     }
-});
+  });
+
+// Add this route in server.js before other routes
+app.get('/genres/:genreName', genreController.getGenreDetailPage);
+
+// Make sure you have this mounting point for API routes
+app.use('/api/genres', genreRoutes);
 
 app.get('/music', async (req, res) => {
     try {
@@ -212,12 +233,16 @@ app.get('/playlists/:id', protect, async (req, res) => {
     }
 });
 
-passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, async (email, password, done) => {
+// In server.js, update the LocalStrategy configuration:
+passport.use(new LocalStrategy({ 
+    usernameField: 'username', // Changed from 'email' to 'username'
+    passwordField: 'password' 
+}, async (username, password, done) => {
     try {
-        const user = await User.findOne({ email });
-        if (!user) return done(null, false, { message: 'Invalid email or password' });
+        const user = await User.findOne({ username }); // Find by username
+        if (!user) return done(null, false, { message: 'Invalid username or password' });
         const isMatch = await user.comparePassword(password);
-        if (!isMatch) return done(null, false, { message: 'Invalid email or password' });
+        if (!isMatch) return done(null, false, { message: 'Invalid username or password' });
         return done(null, user);
     } catch (err) {
         return done(err);

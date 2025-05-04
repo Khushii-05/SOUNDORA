@@ -1,0 +1,161 @@
+.genre-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.genre-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.genre-title {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #fff;
+}
+
+.song-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.song-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s;
+}
+
+.song-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.song-number {
+    width: 30px;
+    text-align: center;
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.song-icon {
+    margin-right: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.song-details {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.song-info {
+    flex-grow: 1;
+}
+
+.song-title {
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.song-artist {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.song-controls {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.song-controls button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.song-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.song-duration {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.6);
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.playlist-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.playlist-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #121212;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 8px 0;
+    right: 0;
+}
+
+.playlist-dropdown:hover .playlist-dropdown-content {
+    display: block;
+}
+
+.playlist-dropdown-content a {
+    color: white;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s;
+}
+
+.playlist-dropdown-content a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.create-playlists-btn {
+    background-color: #1db954;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    margin-bottom: 20px;
+}
+
+.create-playlists-btn:hover {
+    background-color: #1ed760;
+}
+
+.genre-section.collapsed .song-list {
+    display: none;
+}
+
+.genre-toggle {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+}

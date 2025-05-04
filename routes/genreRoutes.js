@@ -6,11 +6,37 @@ const Playlist = require('../models/playlist');
 const genreController = require('../controllers/genreController');
 const { isAuthenticated } = require('../middleware/authMiddleware');
 
+const convertToTitleCase = (str) => {
+  return str.replace(/\w\S*/g, (txt) => {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+};
+
+const sanitizeGenreName = (genre) => {
+  return genre.replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ').trim();
+};
+
 // Render the genres page
 router.get('/', genreController.getGenresPage);
 
 // Render a specific genre page
-router.get('/:genreName', genreController.getGenreDetailPage);
+router.get('/:genreName', async (req, res) => {
+  try {
+    const genreName = req.params.genreName.replace(/-/g, ' ');
+    const songs = await Song.find({ 
+      genre: { $regex: new RegExp(`^${genreName}$`, 'i') }
+    });
+    
+    res.render('genre-detail', {
+      genre: genreName,
+      songs: songs,
+      user: req.user
+    });
+  } catch (error) {
+    console.error('Error loading genre:', error);
+    res.status(500).render('error', { message: 'Error loading genre' });
+  }
+});
 
 // Get all available genres from songs in the database
 router.get('/api/all', isAuthenticated, async (req, res) => {
@@ -72,18 +98,17 @@ router.post('/api/create-genre-playlists', isAuthenticated, async (req, res) => 
 // Get songs by genre
 router.get('/api/songs/:genreName', isAuthenticated, async (req, res) => {
   try {
-    const { genreName } = req.params;
+    const genreName = req.params.genreName.replace(/-/g, ' ');
     const songs = await Song.find({ 
-      genre: { $regex: new RegExp(genreName, 'i') } 
+      genre: { $regex: new RegExp(`^${genreName}$`, 'i') }
     }).sort({ title: 1 });
     
     res.json({ success: true, genre: genreName, songs });
   } catch (error) {
-    console.error('Error getting songs by genre:', error);
+    console.error('Error getting songs:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
-
 // Get recommended songs from similar genres
 router.get('/api/recommendations/:genreName', isAuthenticated, async (req, res) => {
   try {

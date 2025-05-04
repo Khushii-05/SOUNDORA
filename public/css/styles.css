@@ -1565,3 +1565,78 @@ body {
 .error-message button:hover {
     background-color: #bb00ff;
 }
+
+/* Genre Cards */
+.genre-card {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border-radius: 10px;
+    padding: 1rem;
+    text-decoration: none;
+    color: white;
+    transition: transform 0.3s ease;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .genre-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  
+  .genre-content {
+    text-align: center;
+  }
+  
+  .genre-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .genre-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  .music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+  /* Genre Page Specific */
+.playlist-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.playlist-cover {
+    width: 160px;
+    height: 160px;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border-radius: 8px;
+    margin-right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.playlist-cover i {
+    font-size: 64px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.playlist-info h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+}
+
+.song-count {
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 5px;
+}
+
+/* Rest of the styles from playlist.ejs */

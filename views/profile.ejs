@@ -28,15 +28,16 @@
                 <h3>YOUR PLAYLISTS</h3>
                 <ul>
                     <% if (locals.user) { %>
-                        <li><a href="/playlists/favorites">YOUR FAVOURITES</a></li>
-                        <li><a href="/playlists/1">PLAYLIST 1</a></li>
-                        <li><a href="/playlists/2">PLAYLIST 2</a></li>
-                        <li><a href="/playlists/3">PLAYLIST 3</a></li>
+                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        <% if (playlists && playlists.length > 0) { %>
+                            <% playlists.forEach(pl => { %>
+                                <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
+                            <% }) %>
+                        <% } else { %>
+                            <li><span>No playlists yet</span></li>
+                        <% } %>
                     <% } else { %>
-                        <li><a href="/auth">YOUR FAVOURITES</a></li>
-                        <li><a href="/auth">PLAYLIST 1</a></li>
-                        <li><a href="/auth">PLAYLIST 2</a></li>
-                        <li><a href="/auth">PLAYLIST 3</a></li>
+                        <li><a href="/auth">LOGIN TO VIEW</a></li>
                     <% } %>
                 </ul>
             </div>
@@ -165,46 +166,54 @@
                     </div>
                 </div>
 
-                <!-- My Playlists Tab -->
-                <div id="my-playlists" class="profile-tab-content">
-                    <div class="playlist-controls">
-                        <button class="btn btn-solid create-playlist-btn">
-                            <i class="fas fa-plus"></i> Create New Playlist
-                        </button>
-                    </div>
-                    <div class="playlists-grid">
-                        <div class="empty-state">
-                            <i class="fas fa-music"></i>
-                            <h3>No Playlists Yet</h3>
-                            <p>Create your first playlist to start organizing your music.</p>
+                               <!-- My Playlists Tab -->
+                               <div id="my-playlists" class="profile-tab-content">
+                                <div class="category">
+                                    <% if (locals.user) { %>
+                                        <div class="playlist-grid">
+                                            <% if (playlists && playlists.length > 0) { %>
+                                                <% playlists.forEach(pl => { %>
+                                                    <div class="playlist-item">
+                                                        <a href="/playlists/<%= pl._id %>">
+                                                            <div class="playlist-cover"></div>
+                                                            <p><%= pl.name %></p>
+                                                        </a>
+                                                    </div>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <p style="color: white;">No playlists yet. Create your first one!</p>
+                                            <% } %>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="auth-message">
+                                            <p>Please <a href="/auth">sign in</a> to create and view your playlists.</p>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div> <!-- Closing div for my-playlists tab -->
+            
+                            <!-- Favorites Tab -->
+                            <div id="favorites" class="profile-tab-content">
+                                <div class="favorites-list">
+                                    <div class="empty-state">
+                                        <i class="fas fa-heart"></i>
+                                        <h3>No Favorites Yet</h3>
+                                        <p>Songs you like will appear here.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- Closing div for profile-content -->
+            
+                        <!-- LOGOUT BUTTON -->
+                        <div class="profile-footer">
+                            <form action="/auth/logout" method="POST">
+                                <button type="submit" class="logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i> LOGOUT
+                                </button>
+                            </form>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Favorites Tab -->
-                <div id="favorites" class="profile-tab-content">
-                    <div class="favorites-list">
-                        <div class="empty-state">
-                            <i class="fas fa-heart"></i>
-                            <h3>No Favorites Yet</h3>
-                            <p>Songs you like will appear here.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- LOGOUT BUTTON (ONLY ADDITION) -->
-            <div class="profile-footer">
-                <form action="/auth/logout" method="POST">
-
-                    <button type="submit" class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> LOGOUT
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
+                    </div> <!-- Closing div for main-content -->
+                </div> <!-- Closing div for container -->
     <!-- Delete Account Confirmation Modal -->
     <div class="modal" id="delete-account-modal">
         <div class="modal-content">

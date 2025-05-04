@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SOUNDORA - Your Music Platform</title>
@@ -50,6 +51,7 @@
       </div>
 
       <!-- Main Content -->
+       
       <div class="main-content home">
         <div class="header">
           <div class="hero">
@@ -94,15 +96,32 @@
               <div class="music-item"></div>
             </div>
           </div>
-
           <div class="category">
             <h2>GENRE</h2>
             <div class="music-grid">
-              <!-- Placeholder for genre music items -->
-              <div class="music-item"></div>
-              <div class="music-item"></div>
-              <div class="music-item"></div>
-              <div class="music-item"></div>
+              <% if (genres && genres.length > 0) { %>
+                <% genres.forEach(genre => { %>
+                  <div class="music-item genre-card">
+                    <div class="music-content">
+                      <div class="music-icon">
+                        <i class="fas fa-compact-disc"></i>
+                      </div>
+                      <div class="music-info">
+                        <div class="music-title"><%= genre %></div>
+                        <div class="music-subtitle">Genre</div>
+                      </div>
+                    </div>
+                    <div class="play-button" onclick="window.location.href='/genres/<%= genre.toLowerCase().replace(/\s+/g, '-') %>'">
+                      <i class="fas fa-chevron-right"></i>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <div class="empty-state">
+                  <i class="fas fa-music"></i>
+                  <p>No genres found</p>
+                </div>
+              <% } %>
             </div>
           </div>
         </div>
