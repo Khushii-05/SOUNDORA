@@ -131,11 +131,11 @@
                     <% } %>
                 </ul>
             </nav>
-            <div class="playlists">
+            <!-- <div class="playlists">
                 <h3>YOUR PLAYLISTS</h3>
                 <ul>
                     <% if (locals.user) { %>
-                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        If user is logged in, fetch their playlists dynamically
                         <% if (locals.playlists && locals.playlists.length > 0) { %>
                             <% playlists.forEach(function(pl) { %>
                                 <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
@@ -148,9 +148,9 @@
                         <li><a href="/auth">PLAYLIST 1</a></li>
                         <li><a href="/auth">PLAYLIST 2</a></li>
                         <li><a href="/auth">PLAYLIST 3</a></li>
-                    <% } %>
-                </ul>
-            </div>
+                    <% } %> -->
+                <!-- </ul>
+            </div> -->
         </div>
 
         <!-- Main Content -->

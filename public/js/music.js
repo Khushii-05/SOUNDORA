@@ -58,15 +58,33 @@ function searchSongs(query) {
 }
 
 // Genre functionality
+// Add this to your public/js/music.js file or update the existing code
+
+// Update the loadGenreSongs function to use the correct API endpoint
 function loadGenreSongs(genre) {
-    fetch('/api/songs/genre/' + genre)
+    // Debug log
+    console.log('Loading songs for genre:', genre);
+    
+    // Fix the API endpoint path - notice the difference here!
+    fetch('/api/genres/' + encodeURIComponent(genre))
         .then(function(response) {
             return response.json();
         })
-        .then(function(songs) {
+        .then(function(data) {
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load songs');
+            }
+            
+            const songs = data.songs;
             var genreSongsContainer = document.getElementById('genre-songs');
             var genreSongsList = document.getElementById('genre-songs-list');
             var genreTitle = document.getElementById('genre-title');
+            
+            // Check if elements exist
+            if (!genreSongsContainer || !genreSongsList || !genreTitle) {
+                console.error('Genre containers not found in the DOM');
+                return;
+            }
             
             genreSongsContainer.style.display = 'block';
             genreSongsList.innerHTML = '';
@@ -87,16 +105,16 @@ function loadGenreSongs(genre) {
                         '<div class="song-title">' + song.title + '</div>' +
                         '<div class="song-artist">' + song.artist + '</div>' +
                     '</div>' +
-                    '<div class="song-controls">' +
-                        '<button onclick="playSong(\'' + song.title + '\', \'' + song.audioUrl + '\')" title="Play">' +
-                            '<i class="fas fa-play"></i>' +
-                        '</button>' +
-                        '<% if (locals.user) { %>' +
-                        '<button onclick="addToPlaylist(\'' + song._id + '\')" title="Add to playlist">' +
-                            '<i class="fas fa-plus"></i>' +
-                        '</button>' +
-                        '<% } %>' +
-                    '</div>';
+                    '<div class="song-result-controls">' +
+    '<button onclick="playSong(\'' + song.title + '\', \'' + song.audioUrl + '\')">' +
+        '<i class="fas fa-play"></i> Play' +
+    '</button>' +
+    (window.currentUser ? 
+        '<button onclick="addToPlaylist(\'' + song._id + '\')">' +
+            '<i class="fas fa-plus"></i> Add' +
+        '</button>' 
+    : '') +
+'</div>';
                 genreSongsList.appendChild(songItem);
             });
             
@@ -109,12 +127,31 @@ function loadGenreSongs(genre) {
         });
 }
 
+// Add direct navigation to genre from any place in the app
+function navigateToGenre(genreName) {
+    const genreUrl = `/genre/${genreName.toLowerCase().replace(/\s+/g, '-')}`;
+    console.log('Navigating to genre:', genreUrl);
+    window.location.href = genreUrl;
+}
+
+// Make all genre elements clickable
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for genre cards if they exist
+    const genreElements = document.querySelectorAll('[data-genre]');
+    genreElements.forEach(el => {
+        el.addEventListener('click', function() {
+            const genre = this.getAttribute('data-genre');
+            navigateToGenre(genre);
+        });
+    });
+});
+
 // Add to playlist functionality
 function addToPlaylist(songId) {
-    <% if (!locals.user) { %>
+    if (!window.currentUser) {
         window.location.href = '/auth';
         return;
-    <% } %>
+    }
     
     fetch('/api/playlists')
         .then(function(res) {

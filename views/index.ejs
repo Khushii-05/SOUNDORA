@@ -19,7 +19,7 @@
         <nav class="main-nav">
           <ul>
             <li class="active"><a href="/home">HOME</a></li>
-            <li><a href="/library">LIBRARY</a></li>
+            <li><a href="/library">PLAYLIST</a></li>
             <li><a href="/music">MUSIC</a></li>
             <li><a href="/about">ABOUT US</a></li>
             <!-- Add profile link (only visible when logged in) -->
@@ -28,11 +28,11 @@
             <% } %>
           </ul>
         </nav>
-        <div class="playlists">
+        <!-- <div class="playlists">
           <h3>YOUR PLAYLISTS</h3>
           <ul>
             <% if (locals.user) { %>
-                <!-- If user is logged in, fetch their playlists dynamically -->
+                If user is logged in, fetch their playlists dynamically
                 <% if (playlists && playlists.length > 0) { %>
                     <% playlists.forEach(pl => { %>
                         <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
@@ -43,11 +43,11 @@
             <% } else { %>
                 <li><a href="/auth">YOUR FAVOURITES</a></li>
                 <li><a href="/auth">PLAYLIST 1</a></li>
-                <li><a href="/auth">PLAYLIST 2</a></li>
-                <li><a href="/auth">PLAYLIST 3</a></li>
+                <li><a href="/auth">PLAYLIST 2</a></li> -->
+                <!-- <li><a href="/auth">PLAYLIST 3</a></li>
             <% } %>
           </ul>
-        </div>
+        </div> -->
       </div>
 
       <!-- Main Content -->
@@ -86,14 +86,14 @@
         <div id="search-results" class="search-results"></div>
 
         <div class="categories">
+         
           <div class="category">
             <h2>TRENDING</h2>
-            <div class="music-grid">
-              <!-- Placeholder for trending music items -->
-              <div class="music-item"></div>
-              <div class="music-item"></div>
-              <div class="music-item"></div>
-              <div class="music-item"></div>
+            <div class="music-grid" id="daily-mixes">
+              <!-- Loading placeholder -->
+              <div class="music-item loading"></div>
+              <div class="music-item loading"></div>
+              <div class="music-item loading"></div>
             </div>
           </div>
           <div class="category">
@@ -101,7 +101,7 @@
             <div class="music-grid">
               <% if (genres && genres.length > 0) { %>
                 <% genres.forEach(genre => { %>
-                  <div class="music-item genre-card">
+                  <div class="music-item genre-card" data-genre="<%= genre %>">
                     <div class="music-content">
                       <div class="music-icon">
                         <i class="fas fa-compact-disc"></i>
@@ -111,7 +111,7 @@
                         <div class="music-subtitle">Genre</div>
                       </div>
                     </div>
-                    <div class="play-button" onclick="window.location.href='/genres/<%= genre.toLowerCase().replace(/\s+/g, '-') %>'">
+                    <div class="play-button">
                       <i class="fas fa-chevron-right"></i>
                     </div>
                   </div>

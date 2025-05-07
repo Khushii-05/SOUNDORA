@@ -109,11 +109,11 @@
                     <% } %>
                 </ul>
             </nav>
-            <div class="playlists">
+            <!-- <div class="playlists">
                 <h3>YOUR PLAYLISTS</h3>
                 <ul>
                     <% if (locals.user) { %>
-                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        If user is logged in, fetch their playlists dynamically
                         <% if (playlists && playlists.length > 0) { %>
                             <% playlists.forEach(pl => { %>
                                 <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
@@ -125,13 +125,13 @@
                         <li><a href="/auth">LOGIN TO VIEW</a></li>
                     <% } %>
                 </ul>
-            </div>
+            </div> -->
         </div>
 
         <!-- Main Content -->
         <div class="main-content library">
             <div class="header">
-                <h1>LIBRARY</h1>
+                <h1>PLAYLIST</h1>
                 <div class="buttons">
                     <% if (locals.user) { %>
                         <!-- Show profile button only when logged in -->

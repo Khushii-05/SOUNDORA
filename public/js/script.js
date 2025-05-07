@@ -235,9 +235,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     const response = await fetch('/api/users/profile', {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include', // Send cookies
                         body: JSON.stringify({ fullName, email })
                     });
                     
@@ -285,12 +284,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     const response = await fetch('/api/users/password', {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                         body: JSON.stringify({ currentPassword, newPassword })
                     });
-                    
+                     
                     const data = await response.json();
                     
                     if (response.ok) {
@@ -331,6 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         const response = await fetch('/api/users/avatar', {
                             method: 'POST',
+                            credentials: 'include',
                             body: formData
                         });
                         
@@ -393,14 +392,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 try {
-                    const response = await fetch('/api/users/account', {
+                    const response = await fetch('/api/users', {
                         method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                         body: JSON.stringify({ password })
                     });
-                    
+                     
                     const data = await response.json();
                     
                     if (response.ok) {
@@ -515,8 +513,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function loadUserStats() {
         try {
-            const response = await fetch('/users/stats');
+            const response = await fetch('/api/users/profile', { 
+                credentials: 'include' // Ensure cookies are sent
+            });
             if (response.ok) {
+                 
                 const data = await response.json();
                 // Update stats on the page
                 document.querySelector('.stat-value:nth-child(1)').textContent = data.followers || 0;
@@ -529,6 +530,145 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Make genre cards clickable
+    const genreCards = document.querySelectorAll('.music-item.genre-card');
+    
+    if (genreCards.length > 0) {
+        console.log('Found ' + genreCards.length + ' genre cards');
+        
+        genreCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const genreName = this.querySelector('.music-title').textContent;
+                const genreUrl = `/genres/${genreName.toLowerCase().replace(/\s+/g, '-')}`;
+                console.log('Navigating to: ' + genreUrl);
+                window.location.href = genreUrl;
+            });
+        });
+    }
+    
+    // Fix for genre navigation in genre section
+    const genreSections = document.querySelectorAll('.genre-section');
+    if (genreSections.length > 0) {
+        console.log('Found ' + genreSections.length + ' genre sections');
+        
+        // Add toggle functionality for genre sections
+        const genreToggles = document.querySelectorAll('.genre-toggle');
+        genreToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const genreSection = this.closest('.genre-section');
+                genreSection.classList.toggle('collapsed');
+                
+                const icon = this.querySelector('i');
+                if (genreSection.classList.contains('collapsed')) {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                } else {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                }
+            });
+        });
+    }
+    
+    // Debug click events
+    document.body.addEventListener('click', function(e) {
+        const target = e.target.closest('.music-item.genre-card');
+        if (target) {
+            console.log('Genre card clicked:', target);
+        }
+    });
+});
+
+// script.js
+// Add this inside the DOMContentLoaded callback
+// script.js - Update loadDailyMixes function
+async function loadDailyMixes() {
+    try {
+      const res = await fetch('/api/songs/daily-mixes');
+      
+      if (!res.ok) {
+        const error = await res.json();
+        console.error('Server error:', error);
+        showAlert('Failed to load daily mixes. Please try again later.', 'error');
+        return;
+      }
+  
+      const data = await res.json();
+      
+      if (!data.success || !Array.isArray(data.mixes)) {
+        console.error('Invalid response format:', data);
+        return;
+      }
+  
+      const container = document.getElementById('daily-mixes');
+      container.innerHTML = '';
+      
+      data.mixes.forEach(mix => {
+        if (!mix.songs || mix.songs.length === 0) return;
+        
+        const item = document.createElement('div');
+        item.className = 'music-item daily-mix';
+        item.innerHTML = `
+          <div class="music-content">
+            <div class="music-icon">
+              <i class="fas fa-random"></i>
+            </div>
+            <div class="music-info">
+              <div class="music-title">${mix.name}</div>
+              <div class="music-subtitle">${mix.description}</div>
+            </div>
+          </div>
+          <div class="play-button">
+            <i class="fas fa-play"></i>
+          </div>
+        `;
+  
+        // Add click handler
+        item.addEventListener('click', () => playDailyMix(mix));
+        container.appendChild(item);
+      });
+  
+      // Remove loading pulse effect
+      container.classList.remove('loading');
+  
+    } catch (error) {
+      console.error('Network error:', error);
+      showAlert('Connection error. Please check your network.', 'error');
+    }
+  }
+  
+  async function playDailyMix(mix) {
+    try {
+      const player = document.getElementById('audio-player');
+      const nowPlaying = document.getElementById('now-playing');
+      
+      // Shuffle songs
+      const shuffled = [...mix.songs].sort(() => Math.random() - 0.5);
+      
+      // Store playlist
+      window.currentPlaylist = {
+        songs: shuffled,
+        currentIndex: 0
+      };
+  
+      // Play first song
+      player.src = shuffled[0].audioUrl;
+      nowPlaying.textContent = `${shuffled[0].title} - ${shuffled[0].artist}`;
+      player.play();
+  
+      // Add visual feedback
+      document.querySelectorAll('.daily-mix').forEach(item => {
+        item.classList.remove('playing');
+      });
+      event.currentTarget.classList.add('playing');
+  
+    } catch (error) {
+      console.error('Play error:', error);
+      showAlert('Failed to start playback', 'error');
+    }
+  }
+  // Call this at the end of your DOMContentLoaded callback
+  loadDailyMixes();
 // Add CSS for alerts
 const style = document.createElement('style');
 style.textContent = `
@@ -541,4 +681,5 @@ style.textContent = `
         to { opacity: 0; transform: translateY(-20px); }
     }
 `;
+
 document.head.appendChild(style);

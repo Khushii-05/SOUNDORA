@@ -26,11 +26,11 @@
                     <% } %>
                 </ul>
             </nav>
-            <div class="playlists">
+            <!-- <div class="playlists">
                 <h3>YOUR PLAYLISTS</h3>
                 <ul>
                     <% if (locals.user) { %>
-                        <!-- If user is logged in, fetch their playlists dynamically -->
+                        If user is logged in, fetch their playlists dynamically
                         <% if (playlists && playlists.length > 0) { %>
                             <% playlists.forEach(pl => { %>
                                 <li><a href="/playlists/<%= pl._id %>"><%= pl.name %></a></li>
@@ -40,9 +40,9 @@
                         <% } %>
                     <% } else { %>
                         <li><a href="/auth">LOGIN TO SEE PLAYLISTS</a></li>
-                    <% } %>
-                </ul>
-            </div>
+                    <% } %> -->
+                <!-- </ul>
+            </div> -->
         </div>
 
         <!-- Main Content -->

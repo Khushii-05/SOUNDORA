@@ -292,7 +292,9 @@ ul {
     color: #ffffff;
     text-shadow: 0 0 5px rgba(153, 0, 255, 0.5);
 }
+/* Add to your CSS */
 
+ 
 /* MAIN CONTENT */
 .main-content {
     flex: 1;
@@ -1638,5 +1640,51 @@ body {
     color: rgba(255, 255, 255, 0.7);
     margin-top: 5px;
 }
-
+/* Remove pulse animation */
+#daily-mixes .music-item {
+    animation: none !important;
+  }
+  
+  /* Add hover states */
+  .daily-mix:hover {
+    transform: scale(1.02);
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  
+  .daily-mix .play-button {
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Ensure click targets work */
+  .music-item * {
+    pointer-events: none; /* Disable pointer events on children */
+  }
+  
+  .music-item {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .music-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+  
+  .play-button {
+    pointer-events: all !important;
+    z-index: 2;
+  }
+  .daily-mix.playing {
+    border: 2px solid #00b894;
+  }
+  
+  .daily-mix.playing .play-button {
+    color: #00b894;
+  }
 /* Rest of the styles from playlist.ejs */

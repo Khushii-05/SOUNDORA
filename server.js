@@ -13,13 +13,19 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const userRoutes = require('./routes/userRoutes');
 const { protect } = require('./middleware/authMiddleware');
+const cron = require('node-cron');
 
 // Express app initialization
 const app = express();
-app.use('/api/users', userRoutes);
+
 
 // Middleware
-app.use(cors());
+// Replace the existing CORS middleware
+app.use(cors({
+    origin: 'http://localhost:5000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'] // Explicitly allow PUT
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -27,6 +33,8 @@ app.use(cookieParser());
 // Set up EJS view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use('/api/users', userRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -36,7 +44,7 @@ mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 30000, 
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
+})  
 .then(() => console.log('MongoDB connected successfully'))
 .catch((err) => {
     console.error('MongoDB connection error:', err);
@@ -111,6 +119,7 @@ app.use('/api/playlists', playlistRoutes);
 app.use('/', songRoutes);
 app.use('/api/genres', genreRoutes);
 app.get('/genres', genreController.getGenresPage);
+app.use('/api', songRoutes);
 
 // Helper function to get user from token
 const getUserFromToken = async (token) => {

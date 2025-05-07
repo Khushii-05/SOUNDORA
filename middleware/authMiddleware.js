@@ -2,46 +2,40 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User'); 
 
 // Middleware for protected routes that require authentication 
-const protect = async (req, res, next) => { 
-    try { 
-        let token = req.cookies.token;
-        
-        // Check if token exists 
-        if (!token) { 
-            console.log('No authentication token found'); 
-            return res.redirect('/auth?error=Please login to access this page'); 
-        } 
-        
-        try { 
-            // Verify token 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-            
-            // Get the full user object
-            const user = await User.findById(decoded.id).select('-password');
-            
-            if (!user) {
-                console.log('User not found for ID:', decoded.id);
-                res.clearCookie('token');
-                return res.redirect('/auth?error=User not found. Please login again.');
-            }
-            
-            // Set user in request 
-            req.user = user;
-            next(); 
-        } catch (error) { 
-            console.error('Token verification failed:', error); 
-            res.clearCookie('token'); 
-            return res.redirect('/auth?error=Your session has expired. Please login again.'); 
-        } 
-    } catch (error) { 
-        console.error('Auth middleware error:', error); 
-        return res.status(500).render('error', { 
-            message: 'Server error during authentication', 
-            status: 500 
-        }); 
-    } 
-};
-
+const protect = async (req, res, next) => {
+    try {
+      // Check if cookies exist
+      if (!req.cookies) {
+        console.log('No cookies found in request');
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+      }
+  
+      const token = req.cookies.token;
+      
+      if (!token) {
+        console.log('No authentication token found');
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+      }
+  
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id).select('-password');
+  
+      if (!user) {
+        console.log('User not found for ID:', decoded.id);
+        return res.status(401).json({ success: false, message: 'User not found' });
+      }
+  
+      req.user = user;
+      next();
+    } catch (error) {
+      console.error('Auth middleware error:', error);
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Not authenticated',
+        error: error.message 
+      });
+    }
+  };
 // Middleware for API routes that require authentication 
 const isAuthenticated = async (req, res, next) => { 
     try { 
